@@ -10,7 +10,7 @@ const defaultModalState: AuthModalState = { //上で定義しているAuthModalS
     view: "login"
 }
 
-export const AuthModalState = atom<AuthModalState>({
+export const authModalState = atom<AuthModalState>({
     key: "authModalState", //key = recoildで必要なパラメータ、このアトム特有・一意のキーとなる
-     default: defaultModalState, //このアトムの初期値
+    default: defaultModalState, //このアトムの初期値
 })

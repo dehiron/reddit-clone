@@ -1,13 +1,13 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 import { useSetRecoilState } from 'recoil';
-import { AuthModalState } from '../../../atoms/authModalAtom';
+import { authModalState } from '../../../atoms/authModalAtom';
 
 const AuthButtons:React.FC = () => {
 
     //ステートのセットだけする（ステート自体は使わない）場合にこのフックを使える。
     //逆にステート値だけを使うフックもある。
-    const setAuthModalState = useSetRecoilState(AuthModalState); 
+    const setAuthModalState = useSetRecoilState(authModalState); 
 
     return(
         <>
