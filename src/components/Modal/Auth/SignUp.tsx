@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { authModalState } from '../../../atoms/authModalAtom';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { auth } from '../../../firebase/clientApp';
+import { FIREBASE_ERRORS } from '../../../firebase/errors';
 
 const SignUp:React.FC = () => {
 
@@ -13,12 +14,12 @@ const SignUp:React.FC = () => {
         password: "",
         confirmPassword:""
     });
-    const [error, setError] = useState("")
+    const [error, setError] = useState("") // フロント側で定義したエラー制御の内容。
 
     //react-firebase-hooksから
     const [ 
         createUserWithEmailAndPassword,
-        user, loading, userError //error -> userErrorへ。名前なんでも良い。
+        user, loading, userError //error -> userErrorへ。Firebaseから返るエラー内容が入る。
     ] = useCreateUserWithEmailAndPassword(auth)
 
     //Firebase logic
@@ -109,13 +110,14 @@ const SignUp:React.FC = () => {
                 }}
                 bg="gray.50"
             />
-            {error && (
-                <Text textAlign="center" color="red" fontSize="10pt">
-                    {error}
-                </Text>
-            )}
+            <Text textAlign="center" color="red" fontSize="10pt">
+                {/* //errorはフロント側で定義したエラー制御の内容、userErrorはFirebaseから返るエラー内容 */}    
+                {error 
+                    || FIREBASE_ERRORS[userError?.message as keyof typeof FIREBASE_ERRORS] // タイプキャスティング？のテクニックみたい
+                }
+            </Text>
             {/* Buttonはtype=submitにしてformでラップすることにより効力を発揮する */}
-            <Button width="100%" height="36px" mt={2} mb={2} type="submit" isLoading={loading}>
+            <Button width="100%" height="36px" mt={2} mb={2} type="submit" isLoading={loading}> 
                 Sign Up
             </Button>
             <Flex fontSize="9pt" justifyContent="center">
