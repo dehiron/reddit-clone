@@ -2,22 +2,38 @@ import { Button, Flex, Input, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { authModalState } from '../../../atoms/authModalAtom';
-
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from '../../../firebase/clientApp';
 
 const SignUp:React.FC = () => {
 
     const setAuthModalState = useSetRecoilState(authModalState);
-    
     const [signUpform, setSignUpForm] = useState({
         email: "",
         password: "",
         confirmPassword:""
     });
+    const [error, setError] = useState("")
+
+    //react-firebase-hooksから
+    const [ 
+        createUserWithEmailAndPassword,
+        user, loading, userError //error -> userErrorへ。名前なんでも良い。
+    ] = useCreateUserWithEmailAndPassword(auth)
 
     //Firebase logic
-    const onSubmit = () => {};
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => { //ページリフレッシュを制御する為の型
+        event.preventDefault();
+        if (error) setError("");
+        if (signUpform.password !== signUpform.confirmPassword) {
+            setError("Passwords not match");
+            return;
+        }
+        //passwords match
+        createUserWithEmailAndPassword(signUpform.email, signUpform.password)
+    };
 
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => { //インプットイベントを検知する為の型
         //update form state
         setSignUpForm((prev) => ({
             ...prev,
@@ -26,7 +42,7 @@ const SignUp:React.FC = () => {
     };
 
     return (
-        <form onSubmit={() => {onSubmit()}}>
+        <form onSubmit={onSubmit}>
             <Input 
                 required
                 name="email"
@@ -93,8 +109,13 @@ const SignUp:React.FC = () => {
                 }}
                 bg="gray.50"
             />
+            {error && (
+                <Text textAlign="center" color="red" fontSize="10pt">
+                    {error}
+                </Text>
+            )}
             {/* Buttonはtype=submitにしてformでラップすることにより効力を発揮する */}
-            <Button width="100%" height="36px" mt={2} mb={2} type="submit">
+            <Button width="100%" height="36px" mt={2} mb={2} type="submit" isLoading={loading}>
                 Sign Up
             </Button>
             <Flex fontSize="9pt" justifyContent="center">
