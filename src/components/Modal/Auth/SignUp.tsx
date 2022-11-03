@@ -1,10 +1,12 @@
 import { Button, Flex, Input, Text } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { authModalState } from '../../../atoms/authModalAtom';
 import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
-import { auth } from '../../../firebase/clientApp';
+import { auth, firestore } from '../../../firebase/clientApp';
 import { FIREBASE_ERRORS } from '../../../firebase/errors';
+import { User } from 'firebase/auth';
+import { collection, CollectionReference, doc, DocumentData, setDoc } from 'firebase/firestore';
 
 const SignUp:React.FC = () => {
 
@@ -19,7 +21,7 @@ const SignUp:React.FC = () => {
     //react-firebase-hooksから
     const [ 
         createUserWithEmailAndPassword,
-        user, loading, userError //error -> userErrorへ。Firebaseから返るエラー内容が入る。
+        userCred, loading, userError //error -> userErrorへ。Firebaseから返るエラー内容が入る。
     ] = useCreateUserWithEmailAndPassword(auth)
 
     //Firebase logic
@@ -32,6 +34,8 @@ const SignUp:React.FC = () => {
         }
         //passwords match
         createUserWithEmailAndPassword(signUpform.email, signUpform.password)
+
+
     };
 
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => { //インプットイベントを検知する為の型
@@ -41,6 +45,16 @@ const SignUp:React.FC = () => {
             [event.target.name]: event.target.value
         }))
     };
+
+    const createUserDocument = async (user: User) => {
+        await setDoc(doc(firestore, "users", user.uid), JSON.parse(JSON.stringify(user)))
+    }
+
+    useEffect(() => {
+        if (userCred) {
+            createUserDocument(userCred.user);
+        }
+    }, [userCred])
 
     return (
         <form onSubmit={onSubmit}>
@@ -138,3 +152,7 @@ const SignUp:React.FC = () => {
     );
 }
 export default SignUp;
+
+function addDoc(arg0: CollectionReference<DocumentData>, arg1: any) {
+    throw new Error('Function not implemented.');
+}
