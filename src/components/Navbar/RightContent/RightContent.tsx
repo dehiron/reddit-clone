@@ -5,6 +5,7 @@ import { auth } from '../../../firebase/clientApp';
 import AuthModal from '../../Modal/Auth/AuthModal';
 import AuthButtons from './AuthButtons';
 import Icons from './Icons'
+import UserMenu from './UserMenu';
 
 
 type RightContentProps = {
@@ -21,7 +22,7 @@ const RightContent:React.FC<RightContentProps> = ({ user }) => { //destructure
                 ) : (
                     <AuthButtons />
                 )}
-                {/* <Menu /> */}
+                <UserMenu user={user}/>
             </Flex>
         </>
     )
