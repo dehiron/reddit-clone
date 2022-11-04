@@ -2,14 +2,18 @@ import { Box, Button, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import React from 'react';
 import { Community } from '../../atoms/communitiesAtom';
 import { FaReddit } from "react-icons/fa";
+import useCommunityData from '../../hooks/useCommunityData'
 
 type HeaderProps = {
-    communitData: Community;
+    communityData: Community;
 };
 
-const Header:React.FC<HeaderProps> = ({ communitData }) => {
+const Header:React.FC<HeaderProps> = ({ communityData }) => {
 
-    const isJoined = false; //read from our communitySnippets
+    const { communityStateValue, onJoinOrLeaveCommunity } = useCommunityData();
+    const isJoined = !!communityStateValue.mySnippets.find(
+        item => item.communityId === communityData.id
+    );
 
     return (
         <Flex
@@ -20,7 +24,7 @@ const Header:React.FC<HeaderProps> = ({ communitData }) => {
             <Box height="50%" bg="blue.400" />
                 <Flex justify="center" bg="white" flexGrow={1}>
                     <Flex width="95%" maxWidth="860px">
-                        {communitData.imageURL ? (
+                        {communityData.imageURL ? (
                             <Image />
                         ) : (
                             <Icon 
@@ -36,10 +40,10 @@ const Header:React.FC<HeaderProps> = ({ communitData }) => {
                         <Flex padding="10px 16px">
                             <Flex direction="column" mr={6}>
                                 <Text fontWeight={800} fontSize="16px">
-                                    {communitData.id}
+                                    {communityData.id}
                                 </Text>
                                 <Text fontWeight={600} fontSize="10px" color="gray.400">
-                                    r/{communitData.id}
+                                    r/{communityData.id}
                                 </Text>
                             </Flex>
                             <Button 
@@ -47,7 +51,7 @@ const Header:React.FC<HeaderProps> = ({ communitData }) => {
                                 height="30px"
                                 pr={6}
                                 pl={6}
-                                onClick={() => {}}
+                                onClick={() => {onJoinOrLeaveCommunity(communityData, isJoined)}}
                             >
                                 {isJoined ? "Joined" : "Join"}
                             </Button>

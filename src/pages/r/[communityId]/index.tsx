@@ -21,7 +21,7 @@ const communityPage: React.FC<communitPageProps> = ({ communityData }) => {
 
     return (
         <>
-            <Header communitData={communityData}/>
+            <Header communityData={communityData}/>
             <PageContent >
                 <><div>LHS</div></>
                 <><div>RHS</div></>
