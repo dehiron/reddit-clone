@@ -4,14 +4,18 @@ import React from 'react';
 import { Community } from '../../../atoms/communitiesAtom';
 import { firestore } from '../../../firebase/clientApp';
 import safeJsonStringify from 'safe-json-stringify'
+import CommunityNotFound from '../../../components/Community/NotFound';
 
 type communitPageProps = {
     communityData: Community;
 };
 
 const communityPage: React.FC<communitPageProps> = ({ communityData }) => {
-
     console.log("here is data", communityData)
+
+    if (!communityData){ //コミュニティーデータがない場合の処理
+        return <CommunityNotFound />;
+    }
 
     return <div>WELCOME TO {communityData.id}</div>;
 }
@@ -26,14 +30,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             "communities", 
             context.query.communityId as string //パラメータの値を渡す方法
         );
-        const communityDoc = await getDoc(communityDocRef);
 
+        const communityDoc = await getDoc(communityDocRef);
 
         return {
             props: {
-                communityData: JSON.parse(
-                    safeJsonStringify({ id: communityDoc.id, ...communityDoc.data()})
-                )
+                communityData: communityDoc.exists() 
+                    ? 
+                    JSON.parse(
+                        safeJsonStringify({ id: communityDoc.id, ...communityDoc.data()})
+                    )
+                    :
+                    "",
             }
         }
     } catch (error) {
