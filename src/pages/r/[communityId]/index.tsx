@@ -5,6 +5,7 @@ import { Community } from '../../../atoms/communitiesAtom';
 import { firestore } from '../../../firebase/clientApp';
 import safeJsonStringify from 'safe-json-stringify'
 import CommunityNotFound from '../../../components/Community/NotFound';
+import Header from '../../../components/Community/Header';
 
 type communitPageProps = {
     communityData: Community;
@@ -17,7 +18,11 @@ const communityPage: React.FC<communitPageProps> = ({ communityData }) => {
         return <CommunityNotFound />;
     }
 
-    return <div>WELCOME TO {communityData.id}</div>;
+    return (
+        <>
+        <Header communitData={communityData}/>
+        </>
+    )
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -37,11 +42,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             props: {
                 communityData: communityDoc.exists() 
                     ? 
-                    JSON.parse(
-                        safeJsonStringify({ id: communityDoc.id, ...communityDoc.data()})
-                    )
+                        JSON.parse(
+                            safeJsonStringify({ 
+                                id: communityDoc.id, 
+                                ...communityDoc.data()
+                            })
+                        )
                     :
-                    "",
+                        "",
             }
         }
     } catch (error) {
