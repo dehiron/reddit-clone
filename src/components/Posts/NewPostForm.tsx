@@ -96,14 +96,14 @@ const NewPostForm:React.FC<NewPostProps> = ({ user }) => {
                 });
 
             }
+
+            // redirect the user back to the communiyPage using the router
+            router.back();
         } catch (error: any) {
             console.log("handleCreatePost error", error.message)
             setError(true);
         }
         setLoading(false);
-
-        // redirect the user back to the communiyPage using the router
-        // router.back();
     };
 
     const onSelectImage = ( event: React.ChangeEvent<HTMLInputElement> ) => {
