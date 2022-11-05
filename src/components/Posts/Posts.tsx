@@ -7,6 +7,7 @@ import usePosts from '../../hooks/usePosts';
 import PostItem from './PostItem';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { Stack } from '@chakra-ui/react';
+import PostLoader from './PostLoader';
 
 type PostsProps = {
     communityData: Community ;
@@ -18,6 +19,7 @@ const Posts:React.FC<PostsProps> = ({ communityData }) => {
     const {postStateValue, setPostStateValue, onVote, onDeletePost, onSelectPost} = usePosts()
 
     const getPosts = async () => {
+        setLoading(true);
         try {
             // get posts for this community
             const postsQuery = query(
@@ -39,6 +41,7 @@ const Posts:React.FC<PostsProps> = ({ communityData }) => {
         } catch (error: any) {
             console.log("getPosts error", error.message);
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -46,18 +49,25 @@ const Posts:React.FC<PostsProps> = ({ communityData }) => {
     }, []);
 
     return (
-        <Stack>
-            {postStateValue.posts.map((item) => (
-                <PostItem  
-                    post={item} 
-                    userIsCreator={user?.uid === item.creatorId} 
-                    userVoteValue={undefined} 
-                    onVote={onVote} 
-                    onSelectPost={onSelectPost}
-                    onDeletePost={onDeletePost}
-                />
-            ))}
-        </Stack>
+        <>
+            {loading ? (
+                <PostLoader />
+            ) : (
+                <Stack>
+                    {postStateValue.posts.map((item, index) => (
+                        <PostItem  
+                            key={index}
+                            post={item} 
+                            userIsCreator={user?.uid === item.creatorId} 
+                            userVoteValue={undefined} 
+                            onVote={onVote} 
+                            onSelectPost={onSelectPost}
+                            onDeletePost={onDeletePost}
+                        />
+                    ))}
+                </Stack>
+            )}
+        </>
     )
 }
 export default Posts;
