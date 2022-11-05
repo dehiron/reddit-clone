@@ -4,7 +4,6 @@ import { TabItem } from './NewPostForm';
 
 type TabItemProps = {
     item: TabItem;
-    key: number;
     selected: boolean;
     setSelectedTab: (value : string) => void; //function take in argument of type string
 };
